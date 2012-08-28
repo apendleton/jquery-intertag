@@ -32,15 +32,23 @@ var DATA = [
             var subinput = '<input type="text" class="ui-intertag-subinput" />';
             var tag = '<span class="ui-tag"><span class="ui-label"></span><span class="ui-icon ui-icon-close"></span></span>';
 
-            var input = $('<span>').addClass('ui-intertag')
-            var container = $('<span>').addClass('ui-intertag-slider');
+            var input = $('<div>').addClass('ui-intertag')
+            var container = $('<div>').addClass('ui-intertag-slider');
 
             input.append(container);
 
             $(this).replaceWith(input);
 
+            var parent_width = input.width();
+            var slider_left = 0;
+
             var focus_handler = function() {
                 var $this = $(this);
+                
+                var input_left = $this.offset().left - container.offset().left;
+                // recalculate in a few ms in case things shift
+                setTimeout(function() { input_left = $this.offset().left - container.offset().left; }, 10);
+
                 if (!$this.hasClass('ui-autocomplete-input')) {
                     var caret = 0;
                     var last = "";
@@ -94,20 +102,17 @@ var DATA = [
 
                     $this.on('keydown.intertag', function(e) {
                         if (e.which == 8) { // backspace
-                            var $this = $(this);
                             if ($this.caret().end == 0 && !$this.hasClass('ui-intertag-first')) {
                                 removeTag($this.prev());
                                 return false;
                             }
                         } else if (e.which == 46) { // delete
-                            var $this = $(this);
                             if ($this.caret().end == $this.val().length && !$this.hasClass('ui-intertag-last')) {
                                 removeTag($this.next());
                                 return false;
                             }
                         }
                         if (e.which == 37) { // left arrow
-                            var $this = $(this);
                             if ($this.caret().end == 0 && !$this.hasClass('ui-intertag-first')) {
                                 var $selected = $this.prev().prev();
                                 $selected.focus();
@@ -116,7 +121,6 @@ var DATA = [
                                 return false;
                             }
                         } else if (e.which == 39) { // right arrow
-                            var $this = $(this);
                             if ($this.caret().end == $this.val().length && !$this.hasClass('ui-intertag-last')) {
                                 var $selected = $this.next().next();
                                 $selected.focus();
@@ -125,6 +129,43 @@ var DATA = [
                             }
                         }
                     })
+
+                    $this.on('keyup.intertag', function() {
+                        var icaret = $this.caret();
+                        /* now let's make sure we're scrolled appropriately; timeout to make sure everything else is done */
+                        setTimeout(function() {
+                            var tester = $this.data('testSubject')[0];
+                            var width;
+                            if (tester.childNodes.length) {
+                                var range = document.createRange();
+                                range.setStart(tester.childNodes[0], 0);
+                                try {
+                                    range.setEnd(tester.childNodes[0], icaret.end);
+                                } catch(e) {
+                                    // bail so we don't screw up internal state
+                                    return;
+                                }
+
+                                width = range.getBoundingClientRect().width;
+                            } else {
+                                width = 0;
+                            }
+
+                            var caret_pos = input_left + input_padding_left + width;
+
+                            console.log('before', slider_left, caret_pos, input_left, $this.offset().left - container.offset().left);
+                            if (caret_pos < slider_left + size) {
+                                slider_left = Math.max(0, caret_pos - size);
+                                container.css('left', (-1 * slider_left) + "px");    
+                            } else if ((caret_pos > slider_left + parent_width - size) || (caret_pos > slider_left + size && slider_left > size)) {
+                                slider_left = Math.max(0, caret_pos - parent_width + size);
+                                container.css('left', (-1 * slider_left) + "px");    
+                            }
+                            console.log('after', slider_left, caret_pos, input_left, $this.offset().left - container.offset().left);
+                        }, 0);
+                    })
+                    
+                    var input_padding_left = parseInt($this.css('padding-left'));
                 }
             }
 
