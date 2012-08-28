@@ -103,6 +103,24 @@ var DATA = [
                                 return false;
                             }
                         }
+                        if (e.which == 37) { // left arrow
+                            var $this = $(this);
+                            if ($this.caret().end == 0 && !$this.hasClass('ui-intertag-first')) {
+                                var $selected = $this.prev().prev();
+                                $selected.focus();
+                                var new_caret = $selected.val().length;
+                                $selected.caret(new_caret, new_caret);
+                                return false;
+                            }
+                        } else if (e.which == 39) { // right arrow
+                            var $this = $(this);
+                            if ($this.caret().end == $this.val().length && !$this.hasClass('ui-intertag-last')) {
+                                var $selected = $this.next().next();
+                                $selected.focus();
+                                $selected.caret(0, 0);
+                                return false;
+                            }
+                        }
                     })
                 }
             }
@@ -136,9 +154,10 @@ var DATA = [
                     $prev.addClass('ui-intertag-last');
                 }
 
-                $next.remove();
                 // clean up after autogrow
                 $($next.data('testSubject')).remove();
+
+                $next.remove();
 
                 $tag.remove();
                 $prev.trigger('keydown');
