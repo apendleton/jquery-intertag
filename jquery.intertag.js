@@ -32,9 +32,12 @@ var DATA = [
             var subinput = '<input type="text" class="ui-intertag-subinput" />';
             var tag = '<span class="ui-tag"><span class="ui-label"></span><span class="ui-icon ui-icon-close"></span></span>';
 
-            var container = $('<span>').addClass('ui-intertag');
+            var input = $('<span>').addClass('ui-intertag')
+            var container = $('<span>').addClass('ui-intertag-slider');
 
-            $(this).replaceWith(container);
+            input.append(container);
+
+            $(this).replaceWith(input);
 
             var focus_handler = function() {
                 var $this = $(this);
@@ -183,7 +186,9 @@ var DATA = [
                     var length = last_input.val().length;
                     last_input.caret(length, length);
                 }
-            })
+            });
+
+            input.height(container.height());
         });
     }
 })(jQuery);

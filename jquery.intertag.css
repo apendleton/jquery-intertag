@@ -31,4 +31,16 @@
     display: block;
     padding: 0px;
     margin: 0px;
+    overflow: visible;
+    position: relative;
+}
+.ui-intertag-slider {
+    width: 9999px;
+    border: 1px solid green;
+    display: block;
+    padding: 0px;
+    margin: 0px;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
