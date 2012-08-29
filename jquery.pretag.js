@@ -1,26 +1,26 @@
 var DATA = [
-    {"value": "actionscript", "label": "ActionScript"}, 
-    {"value": "applescript", "label": "AppleScript"}, 
-    {"value": "asp", "label": "Asp"}, 
-    {"value": "basic", "label": "BASIC"}, 
-    {"value": "c", "label": "C"}, 
-    {"value": "c++", "label": "C++"}, 
-    {"value": "clojure", "label": "Clojure"}, 
-    {"value": "cobol", "label": "COBOL"}, 
-    {"value": "coldfusion", "label": "ColdFusion"}, 
-    {"value": "erlang", "label": "Erlang"}, 
-    {"value": "fortran", "label": "Fortran"}, 
-    {"value": "groovy", "label": "Groovy"}, 
-    {"value": "haskell", "label": "Haskell"}, 
-    {"value": "java", "label": "Java"}, 
-    {"value": "javascript", "label": "JavaScript"}, 
-    {"value": "lisp", "label": "Lisp"}, 
-    {"value": "perl", "label": "Perl"}, 
-    {"value": "php", "label": "PHP"}, 
-    {"value": "python", "label": "Python"}, 
-    {"value": "ruby", "label": "Ruby"}, 
-    {"value": "scala", "label": "Scala"}, 
-    {"value": "scheme", "label": "Scheme"}
+    {"value": "actionscript", "label": "ActionScript", "type": "language"}, 
+    {"value": "applescript", "label": "AppleScript", "type": "language"}, 
+    {"value": "asp", "label": "Asp", "type": "language"}, 
+    {"value": "basic", "label": "BASIC", "type": "language"}, 
+    {"value": "c", "label": "C", "type": "language"}, 
+    {"value": "c++", "label": "C++", "type": "language"}, 
+    {"value": "clojure", "label": "Clojure", "type": "language"}, 
+    {"value": "cobol", "label": "COBOL", "type": "language"}, 
+    {"value": "coldfusion", "label": "ColdFusion", "type": "language"}, 
+    {"value": "erlang", "label": "Erlang", "type": "language"}, 
+    {"value": "fortran", "label": "Fortran", "type": "language"}, 
+    {"value": "groovy", "label": "Groovy", "type": "language"}, 
+    {"value": "haskell", "label": "Haskell", "type": "language"}, 
+    {"value": "java", "label": "Java", "type": "language"}, 
+    {"value": "javascript", "label": "JavaScript", "type": "language"}, 
+    {"value": "lisp", "label": "Lisp", "type": "language"}, 
+    {"value": "perl", "label": "Perl", "type": "language"}, 
+    {"value": "php", "label": "PHP", "type": "language"}, 
+    {"value": "python", "label": "Python", "type": "language"}, 
+    {"value": "ruby", "label": "Ruby", "type": "language"}, 
+    {"value": "scala", "label": "Scala", "type": "language"}, 
+    {"value": "scheme", "label": "Scheme", "type": "language"}
 ];
 (function() {
     RegExp.escape = function(text) {
@@ -32,8 +32,8 @@ var DATA = [
             var subinput = '<input type="text" class="ui-intertag-subinput" />';
             var tag = '<span class="ui-tag"><span class="ui-label"></span><span class="ui-icon ui-icon-close"></span></span>';
 
-            var container = $('<div>').addClass('ui-intertag')
-            var tags = $("<div class='ui-intertag-tags'></div>")
+            var container = $('<div>').addClass('ui-intertag');
+            var tags = $("<div class='ui-intertag-tags'></div>");
             container.append(tags);
 
             var $this = $(this);
@@ -75,6 +75,9 @@ var DATA = [
                     var new_tag = $(tag);
                     new_tag.find('.ui-label').html(ui.item.label);
                     new_tag.data('value', ui.item.value);
+                    if (ui.item.type) {
+                        new_tag.addClass('ui-tag-type-' + ui.item.type);
+                    }
                     new_tag.appendTo(tags);
 
                     $this.focus();
@@ -86,6 +89,15 @@ var DATA = [
                 },
                 focus: function(event, ui) {
                     return false;
+                },
+                open: function(event, ui) {
+                    $(this).data('autocomplete').menu.element.find('li').each(function(idx, item) {
+                        var $item = $(item);
+                        var data = $item.data('item.autocomplete');
+                        if (data.type) {
+                            $item.addClass('ui-tag-type-' + data.type)
+                        }
+                    });
                 }
             })
             
