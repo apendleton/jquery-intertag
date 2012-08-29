@@ -1,27 +1,3 @@
-var DATA = [
-    {"value": "actionscript", "label": "ActionScript", "type": "language"}, 
-    {"value": "applescript", "label": "AppleScript", "type": "language"}, 
-    {"value": "asp", "label": "Asp", "type": "language"}, 
-    {"value": "basic", "label": "BASIC", "type": "language"}, 
-    {"value": "c", "label": "C", "type": "language"}, 
-    {"value": "c++", "label": "C++", "type": "language"}, 
-    {"value": "clojure", "label": "Clojure", "type": "language"}, 
-    {"value": "cobol", "label": "COBOL", "type": "language"}, 
-    {"value": "coldfusion", "label": "ColdFusion", "type": "language"}, 
-    {"value": "erlang", "label": "Erlang", "type": "language"}, 
-    {"value": "fortran", "label": "Fortran", "type": "language"}, 
-    {"value": "groovy", "label": "Groovy", "type": "language"}, 
-    {"value": "haskell", "label": "Haskell", "type": "language"}, 
-    {"value": "java", "label": "Java", "type": "language"}, 
-    {"value": "javascript", "label": "JavaScript", "type": "language"}, 
-    {"value": "lisp", "label": "Lisp", "type": "language"}, 
-    {"value": "perl", "label": "Perl", "type": "language"}, 
-    {"value": "php", "label": "PHP", "type": "language"}, 
-    {"value": "python", "label": "Python", "type": "language"}, 
-    {"value": "ruby", "label": "Ruby", "type": "language"}, 
-    {"value": "scala", "label": "Scala", "type": "language"}, 
-    {"value": "scheme", "label": "Scheme", "type": "language"}
-];
 (function() {
     RegExp.escape = function(text) {
         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
@@ -29,6 +5,10 @@ var DATA = [
 
     $.fn.intertag = function(options) {
         $(this).each(function() {
+            options = $.extend({
+                'source': function(request, response) { response([]); }
+            }, options);
+
             var subinput = '<input type="text" class="ui-intertag-subinput" />';
             var tag = '<span class="ui-tag"><span class="ui-label"></span><span class="ui-icon ui-icon-close"></span></span>';
 
@@ -56,13 +36,9 @@ var DATA = [
                 source: function(request, response) {
                     caret = this.element.caret().end;
                     last = request.term.substring(0, caret).split(/\s+/g).pop().toLowerCase();
-                    if (last.length == 0) {
-                        response([]);
-                    } else {
-                        response($.grep(DATA, function(el, idx) {
-                            return el.label.toLowerCase().substring(0, last.length) == last;
-                        }));
-                    }
+
+                    var nrequest = $.extend({}, request, {'term': last});
+                    options.source.call(this, nrequest, response);
                 },
                 select: function(event, ui) {
                     var $this = $(this);

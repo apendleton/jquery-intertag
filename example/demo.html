@@ -6,12 +6,10 @@
 	<link rel="stylesheet" href="base/jquery.ui.combined.min.css">
 	<script src="jquery-1.7.1.js"></script>
 	<script src="jquery.caret.js"></script>
-	<script src="jquery.autogrowinput.js"></script>
 	<script src="ui/jquery.ui.core.min.js"></script>
 	<script src="ui/jquery.ui.widget.min.js"></script>
 	<script src="ui/jquery.ui.position.min.js"></script>
 	<script src="ui/jquery.ui.autocomplete.min.js"></script>
-	<link rel="stylesheet" href="demo.css">
 	<link rel="stylesheet" href="../jquery.pretag.css" type="text/css" />
 
 	<style type="text/css">
@@ -27,12 +25,49 @@
 			font-family: "Verdana", "sans-serif";
 			margin: 300px;
 		}
+		.ui-tag-type-new {
+			background: #ccccff;
+		}
 	</style>
 	<script type="text/javascript" src="../jquery.pretag.js"></script>
 
 	<script>
+	var DATA = [
+	    {"value": "actionscript", "label": "ActionScript", "type": "new"}, 
+	    {"value": "applescript", "label": "AppleScript", "type": "new"}, 
+	    {"value": "asp", "label": "Asp", "type": "new"}, 
+	    {"value": "basic", "label": "BASIC", "type": "old"}, 
+	    {"value": "c", "label": "C", "type": "old"}, 
+	    {"value": "c++", "label": "C++", "type": "old"}, 
+	    {"value": "clojure", "label": "Clojure", "type": "new"}, 
+	    {"value": "cobol", "label": "COBOL", "type": "old"}, 
+	    {"value": "coldfusion", "label": "ColdFusion", "type": "old"}, 
+	    {"value": "erlang", "label": "Erlang", "type": "new"}, 
+	    {"value": "fortran", "label": "Fortran", "type": "old"}, 
+	    {"value": "groovy", "label": "Groovy", "type": "new"}, 
+	    {"value": "haskell", "label": "Haskell", "type": "new"}, 
+	    {"value": "java", "label": "Java", "type": "new"}, 
+	    {"value": "javascript", "label": "JavaScript", "type": "new"}, 
+	    {"value": "lisp", "label": "Lisp", "type": "old"}, 
+	    {"value": "perl", "label": "Perl", "type": "old"}, 
+	    {"value": "php", "label": "PHP", "type": "new"}, 
+	    {"value": "python", "label": "Python", "type": "new"}, 
+	    {"value": "ruby", "label": "Ruby", "type": "new"}, 
+	    {"value": "scala", "label": "Scala", "type": "new"}, 
+	    {"value": "scheme", "label": "Scheme", "type": "new"}
+	];
 	$(function() {
-		$('#test').intertag();
+		$('#test').intertag({
+			source: function(request, response) {
+				if (request.term.length == 0) {
+                    response([]);
+                } else {
+                    response($.grep(DATA, function(el, idx) {
+                        return el.label.toLowerCase().substring(0, request.term.length) == request.term;
+                    }));
+                }
+			}
+		});
 	});
 	</script>
 </head>
