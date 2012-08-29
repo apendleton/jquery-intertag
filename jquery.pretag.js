@@ -19,6 +19,9 @@
             var $this = $(this);
             $this.replaceWith(container);
 
+            var menu_area = $("<div>").addClass("ui-menu-area");
+            container.after(menu_area);
+
             var resize_input = function() {
                 var container_width = container.width();
                 var tags_width = tags.width() - parseInt($input.css('padding-left'));
@@ -77,14 +80,18 @@
                     return false;
                 },
                 open: function(event, ui) {
-                    $(this).data('autocomplete').menu.element.find('li').each(function(idx, item) {
+                    var menu = $(this).data('autocomplete').menu.element;
+                    menu.find('li').each(function(idx, item) {
                         var $item = $(item);
                         var data = $item.data('item.autocomplete');
                         if (data.type) {
                             $item.addClass('ui-tag-type-' + data.type)
                         }
                     });
-                }
+                    menu.width(container.width() - (parseInt(menu.css('padding-left')) + parseInt(menu.css('padding-right'))));
+                },
+                appendTo: menu_area,
+                position: {of: menu_area}
             })
             
             var size = Math.round(.8 * parseInt($this.css('fontSize')));
