@@ -33,7 +33,7 @@
                 }
 
                 tags_width = tags.width() - parseInt($input.css('padding-left'));
-                $input.width(container.width() - tags.width() - parseInt($input.css('padding-left')));
+                $input.width(container.width() - tags.width() - parseInt($input.css('padding-left')) - 1);
             }
 
             var $input = $(subinput).addClass('ui-intertag-first').addClass('ui-intertag-last');
