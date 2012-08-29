@@ -11,6 +11,7 @@
 }
 .ui-tag {
     padding: 4px;
+    margin-left: 4px;
     background: #eeeeee;
     border: 1px solid #333333;
     color: #333333;
@@ -18,6 +19,9 @@
     margin-bottom: 2px;
     float: left;
     cursor: default;
+}
+.ui-intertag-tags {
+    float: left;
 }
 .ui-tag .ui-icon-close {
     display: inline-block;
@@ -33,13 +37,4 @@
     margin: 0px;
     overflow: hidden;
     position: relative;
-}
-.ui-intertag-slider {
-    width: 1000px;
-    display: block;
-    padding: 0px;
-    margin: 0px;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
