@@ -20,6 +20,16 @@
             $this.replaceWith(container);
 
             var resize_input = function() {
+                var container_width = container.width();
+                var tags_width = tags.width() - parseInt($input.css('padding-left'));
+                if (tags_width> (container_width / 2)) {
+                    var itags = tags.find('.ui-tag .ui-label');
+                    itags.css({'max-width': (.4 * container_width) / itags.length});
+                } else {
+                    tags.find('.ui-tag .ui-label').css({'max-width':'auto'});
+                }
+
+                tags_width = tags.width() - parseInt($input.css('padding-left'));
                 $input.width(container.width() - tags.width() - parseInt($input.css('padding-left')));
             }
 

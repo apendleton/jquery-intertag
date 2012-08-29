@@ -20,6 +20,12 @@
     float: left;
     cursor: default;
 }
+.ui-tag .ui-label {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
 .ui-intertag-tags {
     float: left;
 }
