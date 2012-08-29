@@ -3,14 +3,14 @@
         return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
     }
 
+    var subinput = '<input type="text" class="ui-intertag-subinput" />';
+    var tag = '<span class="ui-tag"><span class="ui-label"></span><span class="ui-icon ui-icon-close"></span></span>';
+
     $.fn.intertag = function(options) {
         $(this).each(function() {
             options = $.extend({
                 'source': function(request, response) { response([]); }
             }, options);
-
-            var subinput = '<input type="text" class="ui-intertag-subinput" />';
-            var tag = '<span class="ui-tag"><span class="ui-label"></span><span class="ui-icon ui-icon-close"></span></span>';
 
             var container = $('<div>').addClass('ui-intertag');
             var tags = $("<div class='ui-intertag-tags'></div>");
@@ -21,6 +21,8 @@
 
             var menu_area = $("<div>").addClass("ui-menu-area");
             container.after(menu_area);
+
+            container.get(0).type = "taginput";
 
             var resize_input = function() {
                 var container_width = container.width();
@@ -35,13 +37,14 @@
                 tags_width = tags.width() - parseInt($input.css('padding-left'));
                 $input.width(container.width() - tags.width() - parseInt($input.css('padding-left')) - 1);
             }
+            container.on('tagschanged', resize_input);
 
             var $input = $(subinput).addClass('ui-intertag-first').addClass('ui-intertag-last');
             container.append($input);
             var clear = $('<div>').css('clear', 'both');
             container.append(clear);
 
-            resize_input();
+            container.trigger('tagschanged');
 
             var caret = 0;
             var last = "";
@@ -72,7 +75,7 @@
                     $this.focus();
                     $this.caret(pre_tag.length,pre_tag.length);
 
-                    resize_input();
+                    container.trigger('tagschanged');
 
                     return false;
                 },
@@ -106,7 +109,7 @@
 
             var removeTag = function(tag_element) {
                 tag_element.remove();
-                resize_input();
+                container.trigger('tagschanged');
                 $input.focus();
             }
 
@@ -126,5 +129,53 @@
                 }
             });
         });
+    }
+
+    $.valHooks['taginput'] = {
+        get: function(el) {
+            var $el = $(el);
+            var val = {tags: []};
+
+            var tags = $el.find('.ui-intertag-tags');
+            tags.find('.ui-tag').each(function(idx, tag) {
+                var item = {};
+                var $tag = $(tag);
+                item.label = $tag.find('.ui-label').html();
+                item.value = $tag.data('value');
+
+                var classes = $tag.eq(0).attr('class').split(/\s+/);
+                var type_classes = $.grep(classes, function(c) { return c.match(/^ui-tag-type-/) });
+                if (type_classes.length) {
+                    item.type = type_classes[0].substring(12, type_classes[0].length);
+                }
+                val.tags.push(item);
+            });
+            
+            var input = $el.find("input").eq(0);
+            val.text = input.val();
+            
+            return val;
+        },
+        set: function(el, val) {
+            var $el = $(el);
+            
+            var tags = $el.find('.ui-intertag-tags');
+            $.each(val.tags ? val.tags : [], function(idx, item) {
+                var new_tag = $(tag);
+                new_tag.find('.ui-label').html(item.label);
+                new_tag.data('value', item.value);
+                if (item.type) {
+                    new_tag.addClass('ui-tag-type-' + item.type);
+                }
+                new_tag.appendTo(tags);
+            });
+            
+            var input = $el.find("input").eq(0);
+            if (val.text) {
+                input.val(val.text);
+            }
+
+            $el.trigger('tagschanged');
+        }
     }
 })(jQuery);
