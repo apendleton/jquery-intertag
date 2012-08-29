@@ -79,12 +79,18 @@
 	$(function() {
 		$('#test').intertag({
 			source: function(request, response) {
-				if (request.term.length == 0) {
+				var last = request.term.split(/\s+/g).pop().toLowerCase();
+				if (last.length == 0) {
                     response([]);
                 } else {
-                    response($.grep(DATA, function(el, idx) {
-                        return el.label.toLowerCase().substring(0, request.term.length) == request.term;
-                    }));
+                    response($.map(
+                    	$.grep(DATA, function(el, idx) {
+                        	return el.label.toLowerCase().substring(0, last.length) == last;
+                    	}),
+                    	function(item) {
+                    		return $.extend(item, {'term': last});
+                    	}
+                    ));
                 }
 			}
 		});

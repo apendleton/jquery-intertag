@@ -47,19 +47,17 @@
             container.trigger('tagschanged');
 
             var caret = 0;
-            var last = "";
             $input.autocomplete({
                 source: function(request, response) {
                     caret = this.element.caret().end;
-                    last = request.term.substring(0, caret).split(/\s+/g).pop().toLowerCase();
 
-                    var nrequest = $.extend({}, request, {'term': last});
+                    var nrequest = $.extend({}, request, {'term': request.term.substring(0, caret)});
                     options.source.call(this, nrequest, response);
                 },
                 select: function(event, ui) {
                     var $this = $(this);
                     var val = $this.val();
-                    var pre_tag = val.substring(0, caret).split(new RegExp(RegExp.escape(last) + '$', 'ig'))[0];
+                    var pre_tag = val.substring(0, caret).split(new RegExp(RegExp.escape(ui.item.term) + '$', 'ig'))[0];
                     var post_tag = val.substring(caret, val.length);
 
                     $this.val(pre_tag + post_tag);
