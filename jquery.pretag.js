@@ -26,12 +26,13 @@
 
             var resize_input = function() {
                 var container_width = container.width();
+
+                tags.find('.ui-tag .ui-label').css({'max-width':''});
+                
                 var tags_width = tags.width() - parseInt($input.css('padding-left'));
                 if (tags_width> (container_width / 2)) {
                     var itags = tags.find('.ui-tag .ui-label');
                     itags.css({'max-width': (.4 * container_width) / itags.length});
-                } else {
-                    tags.find('.ui-tag .ui-label').css({'max-width':'auto'});
                 }
 
                 tags_width = tags.width() - parseInt($input.css('padding-left'));
@@ -158,6 +159,7 @@
             var $el = $(el);
             
             var tags = $el.find('.ui-intertag-tags');
+            tags.html("");
             $.each(val.tags ? val.tags : [], function(idx, item) {
                 var new_tag = $(tag);
                 new_tag.find('.ui-label').html(item.label);
