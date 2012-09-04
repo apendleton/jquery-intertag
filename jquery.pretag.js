@@ -9,12 +9,29 @@
     $.fn.intertag = function(options) {
         $(this).each(function() {
             options = $.extend({
-                'source': function(request, response) { response([]); }
+                'source': function(request, response) { response([]); },
+                'addTag': function(item) {
+                    var new_tag = $(tag);
+                    new_tag.find('.ui-label').html(item.label);
+                    new_tag.data('value', item.value);
+                    if (item.type) {
+                        new_tag.addClass('ui-tag-type-' + item.type);
+                    }
+                    new_tag.appendTo(tags);
+                    container.trigger('tagschanged');
+                },
+                'getTags': function() {
+                    return tags.find('.ui-tag');
+                },
+                'clearTags': function() {
+                    tags.html("");
+                }
             }, options);
 
             var container = $('<div>').addClass('ui-intertag');
             var tags = $("<div class='ui-intertag-tags'></div>");
             container.append(tags);
+            container.data('intertagOptions', options);
 
             var $this = $(this);
             $this.replaceWith(container);
@@ -63,18 +80,10 @@
 
                     $this.val(pre_tag + post_tag);
 
-                    var new_tag = $(tag);
-                    new_tag.find('.ui-label').html(ui.item.label);
-                    new_tag.data('value', ui.item.value);
-                    if (ui.item.type) {
-                        new_tag.addClass('ui-tag-type-' + ui.item.type);
-                    }
-                    new_tag.appendTo(tags);
+                    options.addTag(ui.item);
 
                     $this.focus();
                     $this.caret(pre_tag.length,pre_tag.length);
-
-                    container.trigger('tagschanged');
 
                     return false;
                 },
@@ -133,10 +142,10 @@
     $.valHooks['taginput'] = {
         get: function(el) {
             var $el = $(el);
+            var options = $el.data('intertagOptions');
             var val = {tags: []};
 
-            var tags = $el.find('.ui-intertag-tags');
-            tags.find('.ui-tag').each(function(idx, tag) {
+            options.getTags().each(function(idx, tag) {
                 var item = {};
                 var $tag = $(tag);
                 item.label = $tag.find('.ui-label').html();
@@ -157,25 +166,17 @@
         },
         set: function(el, val) {
             var $el = $(el);
+            var options = $el.data('intertagOptions');
             
-            var tags = $el.find('.ui-intertag-tags');
-            tags.html("");
+            options.clearTags();
             $.each(val.tags ? val.tags : [], function(idx, item) {
-                var new_tag = $(tag);
-                new_tag.find('.ui-label').html(item.label);
-                new_tag.data('value', item.value);
-                if (item.type) {
-                    new_tag.addClass('ui-tag-type-' + item.type);
-                }
-                new_tag.appendTo(tags);
+                options.addTag(item);
             });
             
             var input = $el.find("input").eq(0);
             if (val.text) {
                 input.val(val.text);
             }
-
-            $el.trigger('tagschanged');
         }
     }
 })(jQuery);
